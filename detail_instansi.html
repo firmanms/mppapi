@@ -143,9 +143,15 @@
     </div>
 
     <!-- ====== MAIN CONTENT ====== -->
-    <main class="flex-1 flex flex-col items-center justify-center py-8 px-4 sm:px-6 relative z-10">
+    <main class="flex-1 flex flex-col py-8 px-4 sm:px-6 relative z-10 w-full max-w-7xl mx-auto">
 
-        <div class="w-full max-w-3xl glass-card rounded-3xl p-6 sm:p-8 md:p-12 animate-fade-in-up">
+        <!-- <div class="mb-6 flex justify-between items-center w-full">
+            <a href="index.html" class="px-4 py-2.5 bg-surface/80 hover:bg-surface border border-borderLine text-textMuted hover:text-primary rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-sm">
+                <i class="fa-solid fa-arrow-left"></i> Kembali ke Beranda
+            </a>
+        </div> -->
+
+        <div class="w-full glass-card rounded-3xl p-6 sm:p-8 md:p-10 animate-fade-in-up">
 
             <!-- Dynamic Instansi Container -->
             <div id="instansi-detail-container">
@@ -187,7 +193,7 @@
 
             if (instansiParam) {
                 currentSlug = instansiParam;
-                
+
                 attemptLiveApiFetch(currentSlug).then(() => {
                     if (layananParam && !isError) {
                         setTimeout(() => toggleLayananAccordion(layananParam), 300);
@@ -224,10 +230,10 @@
                 layananListHtml = `
                     <div class="space-y-3 mt-4" id="layanan-accordion-container">
                         ${data.layanan.map((lay) => {
-                            const isGratis = lay.status === 'gratis';
-                            const badgeText = isGratis ? 'GRATIS / TANPA BIAYA' : (lay.biaya || 'BERBAYAR');
-                            
-                            return `
+                    const isGratis = lay.status === 'gratis';
+                    const badgeText = isGratis ? 'GRATIS / TANPA BIAYA' : (lay.biaya || 'BERBAYAR');
+
+                    return `
                             <div class="border border-borderLine/50 rounded-xl overflow-hidden bg-surface/40 transition-all duration-300">
                                 <!-- Accordion Header -->
                                 <button onclick="toggleLayananAccordion('${lay.slug}')" class="w-full flex items-center justify-between p-3.5 hover:bg-surface/80 transition text-left group">
@@ -301,7 +307,7 @@
                                 </div>
                             </div>
                             `;
-                        }).join('')}
+                }).join('')}
                     </div>
                 `;
             } else {
@@ -328,42 +334,48 @@
                     </div>
                 </div>
 
-                <div class="space-y-6">
-                    <div class="flex items-start gap-4 p-4 rounded-2xl hover:bg-surface/50 transition border border-transparent hover:border-borderLine">
-                        <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-1">
-                            <i class="fa-solid fa-location-dot text-primary"></i>
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    <!-- Left Column: Info & Deskripsi (5 Cols) -->
+                    <div class="lg:col-span-5 space-y-6">
+                        <div class="flex items-start gap-4 p-4 rounded-2xl hover:bg-surface/50 transition border border-transparent hover:border-borderLine">
+                            <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-1">
+                                <i class="fa-solid fa-location-dot text-primary"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold uppercase tracking-widest text-textMuted mb-1">Lokasi Ruangan</h4>
+                                <p class="text-textMain font-semibold text-base sm:text-lg">${escapeHtml(data.lokasiLoket)}</p>
+                            </div>
                         </div>
-                        <div>
-                            <h4 class="text-xs font-bold uppercase tracking-widest text-textMuted mb-1">Lokasi Ruangan</h4>
-                            <p class="text-textMain font-semibold text-lg">${escapeHtml(data.lokasiLoket)}</p>
+
+                        <div class="flex items-start gap-4 p-4 rounded-2xl hover:bg-surface/50 transition border border-transparent hover:border-borderLine">
+                            <div class="w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center shrink-0 mt-1">
+                                <i class="fa-solid fa-clock text-amber-500"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold uppercase tracking-widest text-textMuted mb-1">Jam Layanan</h4>
+                                <p class="text-primary font-bold text-sm sm:text-base">${escapeHtml(data.jamPelayanan)}</p>
+                            </div>
+                        </div>
+
+                        <div class="pt-2 w-full overflow-hidden">
+                            <h4 class="text-xs font-bold uppercase tracking-widest text-textMuted mb-3 pl-2 border-l-2 border-primary">Deskripsi</h4>
+                            <div class="bg-surface/50 border border-borderLine rounded-2xl p-5 md:p-6 shadow-inner w-full overflow-hidden">
+                                <div class="text-textMain leading-relaxed font-medium text-sm sm:text-base html-content break-words whitespace-pre-wrap">
+                                    ${data.deskripsi || '-'}
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="flex items-start gap-4 p-4 rounded-2xl hover:bg-surface/50 transition border border-transparent hover:border-borderLine">
-                        <div class="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center shrink-0 mt-1">
-                            <i class="fa-solid fa-list-check text-emerald-500"></i>
-                        </div>
-                        <div class="flex-1">
-                            <h4 class="text-xs font-bold uppercase tracking-widest text-textMuted mb-3">Layanan (${data.layanan ? data.layanan.length : 0})</h4>
-                            ${layananListHtml}
-                        </div>
-                    </div>
-
-                    <div class="flex items-start gap-4 p-4 rounded-2xl hover:bg-surface/50 transition border border-transparent hover:border-borderLine">
-                        <div class="w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center shrink-0 mt-1">
-                            <i class="fa-solid fa-clock text-amber-500"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-xs font-bold uppercase tracking-widest text-textMuted mb-1">Jam Layanan</h4>
-                            <p class="text-primary font-bold text-sm mt-1">${escapeHtml(data.jamPelayanan)}</p>
-                        </div>
-                    </div>
-
-                    <div class="pt-2 w-full overflow-hidden">
-                        <h4 class="text-xs font-bold uppercase tracking-widest text-textMuted mb-3 pl-2 border-l-2 border-primary">Deskripsi</h4>
-                        <div class="bg-surface/50 border border-borderLine rounded-2xl p-5 md:p-6 shadow-inner w-full overflow-hidden">
-                            <div class="text-textMain leading-relaxed font-medium text-sm sm:text-base html-content break-words whitespace-pre-wrap">
-                                ${data.deskripsi || '-'}
+                    <!-- Right Column: Layanan List (7 Cols) -->
+                    <div class="lg:col-span-7">
+                        <div class="flex items-start gap-4 p-4 rounded-2xl hover:bg-surface/50 transition border border-transparent hover:border-borderLine">
+                            <div class="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center shrink-0 mt-1">
+                                <i class="fa-solid fa-list-check text-emerald-500"></i>
+                            </div>
+                            <div class="flex-1 w-full overflow-hidden">
+                                <h4 class="text-xs font-bold uppercase tracking-widest text-textMuted mb-3">Daftar Layanan (${data.layanan ? data.layanan.length : 0})</h4>
+                                ${layananListHtml}
                             </div>
                         </div>
                     </div>
@@ -383,12 +395,12 @@
         function toggleLayananAccordion(slug) {
             const allBodies = document.querySelectorAll('[id^="body-"]');
             const allIcons = document.querySelectorAll('[id^="icon-"]');
-            
+
             const targetBody = document.getElementById('body-' + slug);
             const targetIcon = document.getElementById('icon-' + slug);
-            
+
             const isCurrentlyHidden = targetBody.classList.contains('hidden');
-            
+
             // Tutup semua dulu
             allBodies.forEach(b => {
                 b.classList.add('hidden');
@@ -398,14 +410,14 @@
                 i.classList.remove('bg-primary', 'text-white');
                 i.classList.add('bg-primary/10', 'text-primary');
             });
-            
+
             // Jika sebelumnya tertutup, maka buka (toggle)
             if (isCurrentlyHidden) {
                 targetBody.classList.remove('hidden');
                 targetIcon.innerHTML = '<i class="fa-solid fa-minus text-xs"></i>';
                 targetIcon.classList.remove('bg-primary/10', 'text-primary');
                 targetIcon.classList.add('bg-primary', 'text-white');
-                
+
                 setTimeout(() => {
                     targetIcon.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }, 100);
@@ -425,8 +437,8 @@
                     if (json.status === 'success' && json.data) {
                         const apiData = json.data;
                         const locationText = apiData.lokasiLoket || apiData.lantai || 'Lantai 1';
-                        const finalLokasi = (apiData.lantai && apiData.lokasiLoket && !apiData.lokasiLoket.toLowerCase().includes(apiData.lantai.toLowerCase())) 
-                            ? apiData.lantai + ', ' + apiData.lokasiLoket 
+                        const finalLokasi = (apiData.lantai && apiData.lokasiLoket && !apiData.lokasiLoket.toLowerCase().includes(apiData.lantai.toLowerCase()))
+                            ? apiData.lantai + ', ' + apiData.lokasiLoket
                             : locationText;
 
                         HTML_DATABASE[slug] = {
