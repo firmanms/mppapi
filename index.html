@@ -288,12 +288,32 @@
                     const json = await res.json();
                     if (json.status === 'success' && json.data && json.data.instansi) {
                         INSTANSI_DATABASE = json.data.instansi;
+                        
+                        // Update Metrics from API response
+                        if (json.data.meta) {
+                            document.getElementById('metric-instansi').textContent = json.data.meta.totalInstansi || INSTANSI_DATABASE.length;
+                            document.getElementById('metric-layanan').textContent = json.data.meta.totalLayanan || 0;
+                        } else {
+                            document.getElementById('metric-instansi').textContent = INSTANSI_DATABASE.length;
+                            const totalLayanan = INSTANSI_DATABASE.reduce((sum, item) => sum + (item._count?.layanan || 0), 0);
+                            document.getElementById('metric-layanan').textContent = totalLayanan;
+                        }
 
-                        // Update Metrics
-                        document.getElementById('metric-instansi').textContent = INSTANSI_DATABASE.length;
-                        const totalLayanan = INSTANSI_DATABASE.reduce((sum, item) => sum + (item._count?.layanan || 0), 0);
-                        document.getElementById('metric-layanan').textContent = totalLayanan;
-
+                        if (json.data.floors) {
+                            // Hitung jumlah lantai unik dari data instansi agar lebih akurat (termasuk Lantai 1)
+                            const floorSet = new Set();
+                            INSTANSI_DATABASE.forEach(item => {
+                                if (item.lantai && item.lantai.toLowerCase().includes('lantai')) {
+                                    floorSet.add(item.lantai.toLowerCase().trim());
+                                }
+                                if (item.lokasiLoket && item.lokasiLoket.toLowerCase().includes('lantai 1')) floorSet.add('lantai 1');
+                                if (item.lokasiLoket && item.lokasiLoket.toLowerCase().includes('lantai 2')) floorSet.add('lantai 2');
+                                if (item.lokasiLoket && item.lokasiLoket.toLowerCase().includes('lantai 3')) floorSet.add('lantai 3');
+                            });
+                            const realFloors = floorSet.size > 0 ? floorSet.size : 3;
+                            document.getElementById('metric-floors').textContent = realFloors;
+                        }
+                        
                         isLoading = false;
                         renderGrid();
                     } else {
