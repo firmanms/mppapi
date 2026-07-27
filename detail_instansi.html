@@ -93,6 +93,41 @@
             background-image: radial-gradient(var(--color-border) 1px, transparent 1px);
             background-size: 24px 24px;
         }
+
+        .html-content p {
+            margin-bottom: 0.75em;
+        }
+
+        .html-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        .html-content ul {
+            list-style-type: disc;
+            padding-left: 1.5em;
+            margin-bottom: 0.75em;
+        }
+
+        .html-content ol {
+            list-style-type: decimal;
+            padding-left: 1.5em;
+            margin-bottom: 0.75em;
+        }
+
+        .html-content a {
+            color: #10B981;
+            text-decoration: underline;
+        }
+
+        .html-content strong,
+        .html-content b {
+            font-weight: 700;
+        }
+
+        .html-content em,
+        .html-content i {
+            font-style: italic;
+        }
     </style>
 </head>
 
@@ -153,185 +188,46 @@
         </div>
     </footer>
 
-    <!-- ====== CLIENT-SIDE SCRIPT & EMBEDDED DATA ENGINE ====== -->
     <script>
-        const HTML_DATABASE = {
-            "bank-bjb": {
-                nama: "Bank BJB",
-                slug: "bank-bjb",
-                kategori: "BUMD / Layanan Keuangan",
-                logo: "https://mpp.bandungkab.com/uploads/ac3cd9ea-a485-4150-a386-c1252606893f.png",
-                lokasiLoket: "Lantai 1, Loket J1",
-                jamPelayanan: "Senin - Jumat: 08.00 - 14.00 WIB",
-                kontak: "14049",
-                deskripsi: "Bank BJB menyediakan layanan perbankan untuk pembayaran pajak, retribusi, dan layanan keuangan lainnya.",
-                layanan: [
-                    { nama: "Tabungan & Simpanan", slug: "tabungan-simpanan", status: "gratis" },
-                    { nama: "Layanan Digital – DIGI bank bjb", slug: "digi-bjb", status: "gratis" },
-                    { nama: "Pembuatan Kartu ATM", slug: "kartu-atm", status: "gratis" },
-                    { nama: "Credit / Pinjaman Usaha", slug: "credit-pinjaman", status: "berbayar" }
-                ]
-            },
-            "disdukcapil": {
-                nama: "Dinas Kependudukan dan Pencatatan Sipil",
-                slug: "disdukcapil",
-                kategori: "Pemerintah",
-                logo: "https://nos.wjv-1.neo.id/skpd/logo/13/1753411939Master%20Logo%20Infografis%20Mediasosial%20(1)%20(1).png",
-                lokasiLoket: "Lantai 1, Loket A1-A5",
-                jamPelayanan: "Senin - Jumat: 08.00 - 15.00 WIB",
-                kontak: "(022) 5891234",
-                deskripsi: "Dinas Kependudukan dan Pencatatan Sipil Kabupaten Bandung melayani berbagai kebutuhan administrasi kependudukan masyarakat.",
-                layanan: [
-                    {
-                        nama: "Pembuatan KTP Elektronik",
-                        slug: "pembuatan-ktp-elektronik",
-                        status: "gratis",
-                        deskripsi: "Layanan pembuatan Kartu Tanda Penduduk Elektronik (KTP-el) bagi warga Kabupaten Bandung yang telah berusia 17 tahun atau sudah menikah.",
-                        persyaratan: "1. Surat pengantar RT/RW\n2. Kartu Keluarga asli\n3. Akta kelahiran/ijazah/surat nikah\n4. Pas foto jika diperlukan",
-                        prosedur: "1. Ambil nomor antrean\n2. Serahkan berkas ke loket\n3. Perekaman data biometrik\n4. Tunggu proses pencetakan",
-                        waktuPenyelesaian: "14 hari kerja",
-                        biaya: "Gratis",
-                        dasarHukum: "Undang-Undang Nomor 24 Tahun 2013 tentang Administrasi Kependudukan."
-                    },
-                    {
-                        nama: "Pembuatan Kartu Keluarga",
-                        slug: "pembuatan-kartu-keluarga",
-                        status: "gratis",
-                        deskripsi: "Layanan pembuatan dan pembaruan Kartu Keluarga bagi warga Kabupaten Bandung.",
-                        persyaratan: "1. Surat pengantar RT/RW\n2. KTP-el asli\n3. Akta kelahiran/nikah/cerai/kematian",
-                        prosedur: "1. Ambil nomor antrean\n2. Serahkan berkas persyaratan\n3. Verifikasi data\n4. Penerbitan KK baru",
-                        waktuPenyelesaian: "7 hari kerja",
-                        biaya: "Gratis",
-                        dasarHukum: "Peraturan Presiden Nomor 96 Tahun 2018."
-                    },
-                    {
-                        nama: "Pembuatan Akta Kelahiran",
-                        slug: "pembuatan-akta-kelahiran",
-                        status: "gratis",
-                        deskripsi: "Layanan pembuatan Akta Kelahiran bagi warga Kabupaten Bandung.",
-                        persyaratan: "1. Surat keterangan lahir dari RS/bidan\n2. KTP orang tua\n3. Kartu Keluarga\n4. Akta nikah orang tua",
-                        prosedur: "1. Ambil nomor antrean\n2. Serahkan berkas\n3. Verifikasi data\n4. Penerbitan akta",
-                        waktuPenyelesaian: "5 hari kerja",
-                        biaya: "Gratis",
-                        dasarHukum: "Permendagri No. 108 Tahun 2019."
-                    }
-                ]
-            },
-            "bapenda": {
-                nama: "Badan Pendapatan Daerah",
-                slug: "bapenda",
-                kategori: "Pemerintah",
-                logo: "https://mpp.bandungkab.com/api/files/e0823374-ff7b-4273-93fe-2fb8bff2c83a.png",
-                lokasiLoket: "Lantai 1, Loket C1-C3",
-                jamPelayanan: "Senin - Jumat: 08.00 - 15.00 WIB",
-                kontak: "(022) 5891111",
-                deskripsi: "Bapenda Kabupaten Bandung melayani pembayaran pajak daerah dan retribusi serta informasi perpajakan.",
-                layanan: [
-                    { nama: "Pembayaran PBB & Pajak Daerah", slug: "pembayaran-pbb", status: "gratis", deskripsi: "Layanan cetak SPPT PBB-P2 dan konsutasi pelunasan pajak daerah." }
-                ]
-            },
-            "bpjs-kesehatan": {
-                nama: "BPJS Kesehatan",
-                slug: "bpjs-kesehatan",
-                kategori: "BUMN",
-                logo: "",
-                lokasiLoket: "Lantai 2, Loket D1-D2",
-                jamPelayanan: "Senin - Jumat: 08.00 - 14.30 WIB",
-                kontak: "1500400",
-                deskripsi: "BPJS Kesehatan menyediakan layanan pendaftaran, perubahan data peserta, dan informasi jaminan kesehatan nasional.",
-                layanan: [
-                    { nama: "Pendaftaran & Perubahan Data BPJS", slug: "pendaftaran-bpjs", status: "gratis" }
-                ]
-            },
-            "imigrasi": {
-                nama: "Kantor Imigrasi",
-                slug: "imigrasi",
-                kategori: "Pemerintah",
-                logo: "",
-                lokasiLoket: "Lantai 2, Loket I1-I2",
-                jamPelayanan: "Senin - Jumat: 08.00 - 15.00 WIB",
-                kontak: "(022) 5894444",
-                deskripsi: "Kantor Imigrasi menyediakan layanan pembuatan dan perpanjangan paspor serta dokumen keimigrasian lainnya.",
-                layanan: [
-                    { nama: "Pembuatan & Perpanjangan Paspor", slug: "pembuatan-paspor", status: "berbayar", waktuPenyelesaian: "3 hari kerja", biaya: "Rp 350.000 - Rp 650.000" }
-                ]
-            },
-            "bpn": {
-                nama: "Kantor Pertanahan (BPN)",
-                slug: "bpn",
-                kategori: "Pemerintah",
-                logo: "",
-                lokasiLoket: "Lantai 2, Loket G1-G3",
-                jamPelayanan: "Senin - Jumat: 08.00 - 15.00 WIB",
-                kontak: "(022) 5892222",
-                deskripsi: "Kantor Pertanahan Kabupaten Bandung melayani pengurusan sertifikat tanah, peralihan hak, dan informasi pertanahan.",
-                layanan: [
-                    { nama: "Pengecekan Sertifikat & Peralihan Hak", slug: "pengecekan-sertifikat", status: "berbayar" }
-                ]
-            },
-            "polres-bandung": {
-                nama: "Kepolisian Resor Bandung",
-                slug: "polres-bandung",
-                kategori: "Pemerintah",
-                logo: "",
-                lokasiLoket: "Lantai 1, Loket H1",
-                jamPelayanan: "Senin - Jumat: 08.00 - 14.00 WIB",
-                kontak: "(022) 5893333",
-                deskripsi: "Polres Bandung menyediakan layanan pembuatan SKCK, laporan kehilangan, dan pelayanan kepolisian lainnya.",
-                layanan: [
-                    { nama: "Pembuatan SKCK Baru & Perpanjangan", slug: "skck", status: "berbayar", biaya: "Rp 30.000", waktuPenyelesaian: "1 hari" }
-                ]
-            },
-            "pln": {
-                nama: "PT PLN (Persero)",
-                slug: "pln",
-                kategori: "BUMN",
-                logo: "",
-                lokasiLoket: "Lantai 2, Loket F1",
-                jamPelayanan: "Senin - Jumat: 08.00 - 14.00 WIB",
-                kontak: "123",
-                deskripsi: "PT PLN melayani permohonan sambungan baru, perubahan daya, dan pengaduan gangguan kelistrikan.",
-                layanan: [
-                    { nama: "Pasang Baru & Perubahan Daya Listrik", slug: "pasang-baru-pln", status: "berbayar" }
-                ]
-            },
-            "kadin": {
-                nama: "KADIN (Kamar Dagang & Industri)",
-                slug: "kadin",
-                kategori: "BUMD / Mitra Usaha",
-                logo: "https://mpp.bandungkab.com/api/files/bf4c2e46-a102-4b7d-9c41-fa3630c80a2e.png",
-                lokasiLoket: "Lantai 2",
-                jamPelayanan: "Tentatif (Jam Kerja)",
-                kontak: "-",
-                deskripsi: "KADIN melayani keanggotaan, konsultasi & pendampingan usaha, kemitraan UMKM, serta informasi peluang investasi.",
-                layanan: [
-                    { nama: "Layanan Keanggotaan & Pendampingan UMKM", slug: "keanggotaan-kadin", status: "gratis" }
-                ]
-            }
-        };
-
-        let currentSlug = 'bank-bjb';
+        let HTML_DATABASE = {};
+        let currentSlug = '';
+        let isLoading = true;
+        let isError = false;
 
         document.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const instansiParam = urlParams.get('instansi') || urlParams.get('slug');
             const layananParam = urlParams.get('layanan');
 
-            if (instansiParam && HTML_DATABASE[instansiParam]) {
+            if (instansiParam) {
                 currentSlug = instansiParam;
-            }
-
-            renderInstansiHTML(currentSlug);
-            attemptLiveApiFetch(currentSlug);
-
-            if (layananParam) {
-                renderLayananModalHTML(layananParam);
+                
+                attemptLiveApiFetch(currentSlug).then(() => {
+                    if (layananParam && !isError) {
+                        renderLayananModalHTML(layananParam);
+                    }
+                });
+            } else {
+                isError = true;
+                isLoading = false;
+                renderInstansiHTML(null);
             }
         });
 
         function renderInstansiHTML(slug) {
-            const data = HTML_DATABASE[slug] || HTML_DATABASE['bank-bjb'];
             const container = document.getElementById('instansi-detail-container');
+
+            if (isLoading) {
+                container.innerHTML = '<div class="text-center py-20 text-textMuted"><i class="fa-solid fa-circle-notch fa-spin text-4xl mb-4 text-primary"></i><p class="font-bold">Mengambil data dari API...</p></div>';
+                return;
+            }
+
+            if (isError || !HTML_DATABASE[slug]) {
+                container.innerHTML = '<div class="text-center py-20 text-red-500"><i class="fa-solid fa-triangle-exclamation text-4xl mb-4"></i><p class="font-bold">Instansi tidak ditemukan atau gagal memuat data.</p><a href="index.html" class="inline-block mt-4 px-5 py-2 bg-primary/10 hover:bg-primary text-primary hover:text-white rounded-xl transition font-bold">Kembali ke Beranda</a></div>';
+                return;
+            }
+
+            const data = HTML_DATABASE[slug];
 
             const logoHtml = data.logo
                 ? `<img src="${data.logo}" alt="Logo ${escapeHtml(data.nama)}" class="w-full h-full object-contain" onerror="this.outerHTML='<div class=\\'text-center text-gray-400\\'><i class=\\'fa-solid fa-building-columns text-3xl mb-1\\'></i><p class=\\'text-[10px] font-bold\\'>${data.slug.toUpperCase()}</p></div>'">`
@@ -354,6 +250,8 @@
                         `).join('')}
                     </ul>
                 `;
+            } else {
+                layananListHtml = '<p class="text-sm text-textMuted italic">Belum ada data layanan.</p>';
             }
 
             container.innerHTML = `
@@ -403,28 +301,37 @@
                         </div>
                         <div>
                             <h4 class="text-xs font-bold uppercase tracking-widest text-textMuted mb-1">Jam Layanan</h4>
-                            <p class="text-textMain font-semibold text-lg">Senin - Jumat</p>
                             <p class="text-primary font-bold text-sm mt-1">${escapeHtml(data.jamPelayanan)}</p>
                         </div>
                     </div>
 
-                    <div class="pt-2">
+                    <div class="pt-2 w-full overflow-hidden">
                         <h4 class="text-xs font-bold uppercase tracking-widest text-textMuted mb-3 pl-2 border-l-2 border-primary">Deskripsi</h4>
-                        <div class="bg-surface/50 border border-borderLine rounded-2xl p-5 md:p-6 shadow-inner">
-                            <p class="text-textMain leading-relaxed font-medium text-sm sm:text-base">
-                                ${escapeHtml(data.deskripsi)}
-                            </p>
+                        <div class="bg-surface/50 border border-borderLine rounded-2xl p-5 md:p-6 shadow-inner w-full overflow-hidden">
+                            <div class="text-textMain leading-relaxed font-medium text-sm sm:text-base html-content break-words whitespace-pre-wrap">
+                                ${data.deskripsi || '-'}
+                            </div>
                         </div>
                     </div>
                 </div>
             `;
         }
 
+        function changeInstansi(slug) {
+            if (!slug) return;
+            currentSlug = slug;
+            closeLayananModal();
+            attemptLiveApiFetch(slug);
+
+            const newUrl = window.location.pathname + '?instansi=' + slug;
+            window.history.pushState({ path: newUrl }, '', newUrl);
+        }
+
         function renderLayananModalHTML(layananSlug) {
             const modal = document.getElementById('layanan-detail-modal');
             const modalBody = document.getElementById('layanan-modal-body');
 
-            const instansiData = HTML_DATABASE[currentSlug] || HTML_DATABASE['disdukcapil'];
+            const instansiData = HTML_DATABASE[currentSlug];
             let layData = null;
 
             if (instansiData && instansiData.layanan) {
@@ -447,10 +354,10 @@
                         </div>
 
                         ${layData.deskripsi ? `
-                            <div>
+                            <div class="w-full overflow-hidden">
                                 <h5 class="text-xs font-bold uppercase tracking-widest text-textMuted mb-2">Deskripsi</h5>
-                                <div class="text-sm text-textMain leading-relaxed font-medium bg-surface/80 p-4 rounded-xl border border-borderLine">
-                                    ${escapeHtml(layData.deskripsi)}
+                                <div class="text-sm text-textMain leading-relaxed font-medium bg-surface/80 p-4 rounded-xl border border-borderLine html-content break-words whitespace-pre-wrap w-full overflow-hidden">
+                                    ${layData.deskripsi}
                                 </div>
                             </div>
                         ` : ''}
@@ -459,13 +366,13 @@
                             <div>
                                 <h5 class="text-xs font-bold uppercase tracking-widest text-textMuted mb-2"><i class="fa-solid fa-list-check text-primary mr-1"></i> Persyaratan Berkas</h5>
                                 <div class="text-xs sm:text-sm text-textMain leading-relaxed font-medium bg-surface/80 p-4 rounded-xl border border-borderLine whitespace-pre-line">
-                                    ${layData.persyaratan || '1. KTP Elektronik / Kartu Keluarga\n2. Dokumen pendukung sesuai permohonan'}
+                                    ${layData.persyaratan || 'Lihat di website resmi atau tanyakan di loket layanan.'}
                                 </div>
                             </div>
                             <div>
                                 <h5 class="text-xs font-bold uppercase tracking-widest text-textMuted mb-2"><i class="fa-solid fa-diagram-project text-emerald-500 mr-1"></i> Prosedur & Alur</h5>
                                 <div class="text-xs sm:text-sm text-textMain leading-relaxed font-medium bg-surface/80 p-4 rounded-xl border border-borderLine whitespace-pre-line">
-                                    ${layData.prosedur || '1. Ambil nomor antrean di mesin antrean MPP\n2. Verifikasi berkas di Loket\n3. Pengambilan dokumen hasil'}
+                                    ${layData.prosedur || 'Silakan datang langsung ke loket MPP untuk informasi lebih lanjut.'}
                                 </div>
                             </div>
                         </div>
@@ -477,7 +384,7 @@
                                 </div>
                                 <div>
                                     <h6 class="text-[10px] font-bold uppercase tracking-widest text-textMuted">Waktu Penyelesaian</h6>
-                                    <p class="text-sm font-bold text-textMain">${escapeHtml(layData.waktuPenyelesaian || '1 - 3 hari kerja')}</p>
+                                    <p class="text-sm font-bold text-textMain">${escapeHtml(layData.waktuPenyelesaian || '-')}</p>
                                 </div>
                             </div>
                             <div class="p-4 rounded-xl bg-surface/80 border border-borderLine flex items-center gap-3">
@@ -496,7 +403,7 @@
                 modalBody.innerHTML = `
                     <div class="p-6 bg-surface/50 border border-borderLine rounded-2xl text-center text-textMuted">
                         <p class="font-bold text-textMain mb-1">Layanan: ${escapeHtml(layananSlug)}</p>
-                        <p class="text-xs">Informasi layanan dapat dikonsultasikan secara langsung di Loket ${escapeHtml(instansiData.nama)}.</p>
+                        <p class="text-xs">Informasi layanan tidak ditemukan dalam database saat ini.</p>
                     </div>
                 `;
             }
@@ -507,41 +414,52 @@
         }
 
         async function attemptLiveApiFetch(slug) {
+            isLoading = true;
+            isError = false;
+            renderInstansiHTML(slug);
+
             try {
                 const liveUrl = `https://mpp.bandungkab.com/api/vt/instansi/${slug}`;
-                const res = await fetch(`https://corsproxy.io/?${encodeURIComponent(liveUrl)}`);
+                const res = await fetch(`proxy.php?url=${encodeURIComponent(liveUrl)}`);
                 if (res.ok) {
                     const json = await res.json();
                     if (json.status === 'success' && json.data) {
                         const apiData = json.data;
+                        const locationText = apiData.lokasiLoket || apiData.lantai || 'Lantai 1';
+                        const finalLokasi = (apiData.lantai && apiData.lokasiLoket && !apiData.lokasiLoket.toLowerCase().includes(apiData.lantai.toLowerCase())) 
+                            ? apiData.lantai + ', ' + apiData.lokasiLoket 
+                            : locationText;
+
                         HTML_DATABASE[slug] = {
                             nama: apiData.nama,
                             slug: apiData.slug,
                             kategori: apiData.kategori?.nama || 'Pelayanan Publik',
                             logo: apiData.logo ? (apiData.logo.startsWith('http') ? apiData.logo : 'https://mpp.bandungkab.com' + apiData.logo) : '',
-                            lokasiLoket: apiData.lokasiLoket || 'Lantai 1',
-                            jamPelayanan: apiData.jamPelayanan || 'Senin - Jumat',
+                            lokasiLoket: finalLokasi,
+                            jamPelayanan: apiData.jamPelayanan || '',
                             kontak: apiData.kontak || '-',
-                            deskripsi: apiData.deskripsi ? stripHtml(apiData.deskripsi) : '',
-                            layanan: apiData.layanan || HTML_DATABASE[slug]?.layanan || []
+                            deskripsi: apiData.deskripsi || '',
+                            layanan: apiData.layanan || []
                         };
+                        isLoading = false;
                         renderInstansiHTML(slug);
+                    } else {
+                        throw new Error('Data tidak valid dari API');
                     }
+                } else {
+                    throw new Error('Gagal menghubungi API');
                 }
             } catch (e) {
+                console.error("API Fetch Error:", e);
+                isError = true;
+                isLoading = false;
+                renderInstansiHTML(slug);
             }
         }
 
         function escapeHtml(str) {
             if (!str) return '';
             return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        }
-
-        function stripHtml(html) {
-            if (!html) return '';
-            const tmp = document.createElement("DIV");
-            tmp.innerHTML = html;
-            return tmp.textContent || tmp.innerText || "";
         }
     </script>
 </body>

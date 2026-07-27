@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initTabs();
     initConsole();
     initEvents();
-    
+
     // Fetch initial dataset on launch
     fetchMainVTData();
 });
@@ -45,10 +45,10 @@ async function fetchApiData(targetUrl) {
             headers: { 'Accept': 'application/json' }
         });
         const duration = Math.round(performance.now() - startTime);
-        
+
         if (!response.ok) throw new Error(`HTTP Error Status: ${response.status}`);
         const json = await response.json();
-        
+
         return {
             ok: true,
             status: response.status,
@@ -63,7 +63,7 @@ async function fetchApiData(targetUrl) {
             const response = await fetch(proxyUrl);
             const duration = Math.round(performance.now() - startTime);
             const json = await response.json();
-            
+
             if (json.status === 'success') {
                 return {
                     ok: true,
@@ -104,7 +104,7 @@ async function fetchMainVTData() {
         renderFloorFilters();
         renderInstansiGrid();
         populateInstansiDropdown();
-        
+
         // Console auto update
         updateConsoleOutput(result);
     } else {
@@ -122,7 +122,7 @@ function initTabs() {
     tabBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             const tabId = btn.getAttribute('data-tab');
-            
+
             tabBtns.forEach(b => b.classList.remove('active'));
             tabContents.forEach(c => c.classList.remove('active'));
 
@@ -187,9 +187,9 @@ function renderInstansiGrid() {
     filtered.forEach(item => {
         const card = document.createElement('div');
         card.className = 'instansi-card';
-        
+
         const categoryBadgeClass = item.kategori?.slug === 'pemerintah' ? 'badge-pemerintah' : (item.kategori?.slug === 'bumd' ? 'badge-bumd' : 'badge-bumn');
-        const logoElement = item.logo 
+        const logoElement = item.logo
             ? `<img src="${fixImageUrl(item.logo)}" class="instansi-logo" alt="${item.nama}" onerror="this.outerHTML='<div class=\\'instansi-logo-fallback\\'><i class=\\'fa-solid fa-building\\'></i></div>'">`
             : `<div class="instansi-logo-fallback"><i class="fa-solid fa-building"></i></div>`;
 
@@ -204,7 +204,7 @@ function renderInstansiGrid() {
                 </div>
                 <div class="instansi-details">
                     <div class="item"><i class="fa-solid fa-location-dot"></i> <span>${escapeHtml(item.lokasiLoket || 'Loket MPP')}</span></div>
-                    <div class="item"><i class="fa-solid fa-clock"></i> <span>${escapeHtml(item.jamPelayanan || 'Senin - Jumat')}</span></div>
+                    <div class="item"><i class="fa-solid fa-clock"></i> <span>${escapeHtml(item.jamPelayanan || '')}</span></div>
                     ${item.kontak ? `<div class="item"><i class="fa-solid fa-phone"></i> <span>${escapeHtml(item.kontak)}</span></div>` : ''}
                 </div>
             </div>
@@ -244,7 +244,7 @@ function populateInstansiDropdown() {
  * View Instansi Detail Programmatically
  */
 
-window.viewInstansiDetail = function(slug) {
+window.viewInstansiDetail = function (slug) {
     // Switch tab to Instansi Detail
     document.querySelector('[data-tab="tab-instansi"]').click();
     document.getElementById('select-instansi').value = slug;
@@ -264,13 +264,13 @@ async function fetchInstansiDetail(slug) {
     if (result.ok && result.data && result.data.data) {
         const detail = result.data.data;
         state.selectedInstansi = detail;
-        
+
         // Auto update console output
         state.currentConsoleUrl = url;
         document.getElementById('console-url').value = url;
         updateConsoleOutput(result);
 
-        const logoHtml = detail.logo 
+        const logoHtml = detail.logo
             ? `<img src="${fixImageUrl(detail.logo)}" class="detail-hero-logo" alt="${detail.nama}">`
             : `<div class="instansi-logo-fallback" style="width: 80px; height: 80px; font-size: 2.2rem;"><i class="fa-solid fa-building"></i></div>`;
 
@@ -368,7 +368,7 @@ function populateLayananDropdown(layananList) {
 /**
  * View Layanan Detail Programmatically
  */
-window.viewLayananDetail = function(slug) {
+window.viewLayananDetail = function (slug) {
     document.querySelector('[data-tab="tab-layanan"]').click();
     fetchLayananDetail(slug);
 };
@@ -481,7 +481,7 @@ function initConsole() {
     btnSend.addEventListener('click', async () => {
         const url = inputUrl.value.trim();
         if (!url) return;
-        
+
         btnSend.innerHTML = '<div class="spinner"></div> Sending...';
         btnSend.disabled = true;
 
@@ -530,7 +530,7 @@ function initConsole() {
  */
 function updateConsoleOutput(result) {
     state.lastConsoleResponse = result;
-    
+
     document.getElementById('console-status').textContent = `${result.status} ${result.ok ? 'OK' : 'Error'}`;
     document.getElementById('console-status').style.color = result.ok ? 'var(--status-success)' : 'var(--status-error)';
     document.getElementById('console-latency').textContent = `${result.latency} ms`;
@@ -576,7 +576,7 @@ function renderCodeSnippet() {
     const box = document.getElementById('code-snippet-box');
     let code = '';
 
-    switch(state.activeCodeSnippet) {
+    switch (state.activeCodeSnippet) {
         case 'js':
             code = `fetch("${url}")\n  .then(res => res.json())\n  .then(data => console.log(data));`;
             break;

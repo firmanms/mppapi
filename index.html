@@ -156,6 +156,9 @@
                 <button onclick="setFloorFilter('Lantai 2')"
                     class="floor-btn px-3.5 py-1.5 rounded-full text-xs font-bold bg-surface border border-borderLine text-textMuted hover:text-primary transition">Lantai
                     2</button>
+                <button onclick="setFloorFilter('Lantai 3')"
+                    class="floor-btn px-3.5 py-1.5 rounded-full text-xs font-bold bg-surface border border-borderLine text-textMuted hover:text-primary transition">Lantai
+                    3</button>
             </div>
         </div>
 
@@ -177,21 +180,10 @@
 
     <!-- ====== CLIENT SCRIPT & DATABASE ====== -->
     <script>
-        const INSTANSI_DATABASE = [
-            { id: 10, nama: "Bank BJB", slug: "bank-bjb", logo: "https://mpp.bandungkab.com/uploads/ac3cd9ea-a485-4150-a386-c1252606893f.png", lokasiLoket: "Lantai 1, Loket J1", jamPelayanan: "Senin - Jumat: 08.00 - 14.00 WIB", kontak: "14049", kategori: { nama: "BUMD" }, _count: { layanan: 0 } },
-            { id: 1, nama: "Dinas Kependudukan dan Pencatatan Sipil", slug: "disdukcapil", logo: "https://nos.wjv-1.neo.id/skpd/logo/13/1753411939Master%20Logo%20Infografis%20Mediasosial%20(1)%20(1).png", lokasiLoket: "Lantai 1, Loket A1-A5", jamPelayanan: "Senin - Jumat: 08.00 - 15.00 WIB", kontak: "(022) 5891234", kategori: { nama: "Pemerintah" }, _count: { layanan: 3 } },
-            { id: 3, nama: "Badan Pendapatan Daerah", slug: "bapenda", logo: "https://mpp.bandungkab.com/api/files/e0823374-ff7b-4273-93fe-2fb8bff2c83a.png", lokasiLoket: "Lantai 1, Loket C1-C3", jamPelayanan: "Senin - Jumat: 08.00 - 15.00 WIB", kontak: "(022) 5891111", kategori: { nama: "Pemerintah" }, _count: { layanan: 1 } },
-            { id: 4, nama: "BPJS Kesehatan", slug: "bpjs-kesehatan", logo: null, lokasiLoket: "Lantai 2, Loket D1-D2", jamPelayanan: "Senin - Jumat: 08.00 - 14.30 WIB", kontak: "1500400", kategori: { nama: "BUMN" }, _count: { layanan: 1 } },
-            { id: 5, nama: "BPJS Ketenagakerjaan", slug: "bpjs-ketenagakerjaan", logo: null, lokasiLoket: "Lantai 2, Loket E1-E2", jamPelayanan: "Senin - Jumat: 08.00 - 14.30 WIB", kontak: "175", kategori: { nama: "BUMN" }, _count: { layanan: 0 } },
-            { id: 2, nama: "Dinas Penanaman Modal dan Pelayanan Terpadu Satu Pintu", slug: "dpmptsp", logo: null, lokasiLoket: "Lantai 1, Loket B1-B3", jamPelayanan: "Senin - Jumat: 08.00 - 15.00 WIB", kontak: "(022) 5895678", kategori: { nama: "Pemerintah" }, _count: { layanan: 2 } },
-            { id: 9, nama: "Kantor Imigrasi", slug: "imigrasi", logo: null, lokasiLoket: "Lantai 2, Loket I1-I2", jamPelayanan: "Senin - Jumat: 08.00 - 15.00 WIB", kontak: "(022) 5894444", kategori: { nama: "Pemerintah" }, _count: { layanan: 1 } },
-            { id: 7, nama: "Kantor Pertanahan (BPN)", slug: "bpn", logo: null, lokasiLoket: "Lantai 2, Loket G1-G3", jamPelayanan: "Senin - Jumat: 08.00 - 15.00 WIB", kontak: "(022) 5892222", kategori: { nama: "Pemerintah" }, _count: { layanan: 1 } },
-            { id: 8, nama: "Kepolisian Resor Bandung", slug: "polres-bandung", logo: null, lokasiLoket: "Lantai 1, Loket H1", jamPelayanan: "Senin - Jumat: 08.00 - 14.00 WIB", kontak: "(022) 5893333", kategori: { nama: "Pemerintah" }, _count: { layanan: 1 } },
-            { id: 6, nama: "PT PLN (Persero)", slug: "pln", logo: null, lokasiLoket: "Lantai 2, Loket F1", jamPelayanan: "Senin - Jumat: 08.00 - 14.00 WIB", kontak: "123", kategori: { nama: "BUMN" }, _count: { layanan: 0 } },
-            { id: 11, nama: "KADIN", slug: "kadin", logo: "https://mpp.bandungkab.com/api/files/bf4c2e46-a102-4b7d-9c41-fa3630c80a2e.png", lokasiLoket: "Lantai 2", jamPelayanan: "Tentatif", kontak: "-", kategori: { nama: "BUMD" }, _count: { layanan: 0 } }
-        ];
-
+        let INSTANSI_DATABASE = [];
         let activeFloorFilter = 'Semua';
+        let isLoading = true;
+        let isError = false;
 
         document.addEventListener('DOMContentLoaded', () => {
             renderGrid();
@@ -200,14 +192,32 @@
 
         function renderGrid() {
             const grid = document.getElementById('instansi-grid');
+
+            if (isLoading) {
+                grid.innerHTML = '<div class="col-span-full text-center py-20 text-textMuted"><i class="fa-solid fa-circle-notch fa-spin text-4xl mb-4 text-primary"></i><p class="font-bold">Mengambil data dari API...</p></div>';
+                return;
+            }
+
+            if (isError) {
+                grid.innerHTML = '<div class="col-span-full text-center py-20 text-red-500"><i class="fa-solid fa-triangle-exclamation text-4xl mb-4"></i><p class="font-bold">Gagal mengambil data dari API.</p><button onclick="tryLiveFetch()" class="mt-4 px-4 py-2 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white rounded-xl transition">Coba Lagi</button></div>';
+                return;
+            }
+
             const searchVal = document.getElementById('search-input').value.toLowerCase();
             grid.innerHTML = '';
 
             const filtered = INSTANSI_DATABASE.filter(item => {
                 const matchSearch = item.nama.toLowerCase().includes(searchVal) || (item.slug && item.slug.toLowerCase().includes(searchVal));
-                const matchFloor = activeFloorFilter === 'Semua' || (item.lokasiLoket && item.lokasiLoket.includes(activeFloorFilter));
+                const matchFloor = activeFloorFilter === 'Semua' || 
+                                   (item.lantai && item.lantai.includes(activeFloorFilter)) || 
+                                   (item.lokasiLoket && item.lokasiLoket.includes(activeFloorFilter));
                 return matchSearch && matchFloor;
             });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '<div class="col-span-full text-center py-20 text-textMuted"><i class="fa-solid fa-folder-open text-4xl mb-4 opacity-50"></i><p>Tidak ada instansi yang ditemukan.</p></div>';
+                return;
+            }
 
             filtered.forEach(item => {
                 let logoSrc = item.logo;
@@ -229,7 +239,14 @@
                             </div>
                         </div>
                         <div class="text-xs text-textMuted space-y-1.5 mb-6">
-                            <div class="flex items-center gap-2"><i class="fa-solid fa-location-dot text-primary w-4 text-center"></i> ${escapeHtml(item.lokasiLoket || 'Lantai 1')}</div>
+                            <div class="flex items-center gap-2">
+                                <i class="fa-solid fa-location-dot text-primary w-4 text-center"></i> 
+                                ${escapeHtml(
+                                    item.lantai && item.lokasiLoket && !item.lokasiLoket.toLowerCase().includes(item.lantai.toLowerCase()) 
+                                        ? item.lantai + ', ' + item.lokasiLoket 
+                                        : (item.lokasiLoket || item.lantai || 'Lantai 1')
+                                )}
+                            </div>
                             <div class="flex items-center gap-2"><i class="fa-solid fa-clock text-amber-500 w-4 text-center"></i> ${escapeHtml(item.jamPelayanan || 'Senin - Jumat')}</div>
                         </div>
                     </div>
@@ -261,18 +278,35 @@
         }
 
         async function tryLiveFetch() {
+            isLoading = true;
+            isError = false;
+            renderGrid();
             try {
                 const liveUrl = 'https://mpp.bandungkab.com/api/vt';
-                const res = await fetch(`https://corsproxy.io/?${encodeURIComponent(liveUrl)}`);
+                const res = await fetch(`proxy.php?url=${encodeURIComponent(liveUrl)}`);
                 if (res.ok) {
                     const json = await res.json();
                     if (json.status === 'success' && json.data && json.data.instansi) {
-                        INSTANSI_DATABASE.length = 0;
-                        INSTANSI_DATABASE.push(...json.data.instansi);
+                        INSTANSI_DATABASE = json.data.instansi;
+
+                        // Update Metrics
+                        document.getElementById('metric-instansi').textContent = INSTANSI_DATABASE.length;
+                        const totalLayanan = INSTANSI_DATABASE.reduce((sum, item) => sum + (item._count?.layanan || 0), 0);
+                        document.getElementById('metric-layanan').textContent = totalLayanan;
+
+                        isLoading = false;
                         renderGrid();
+                    } else {
+                        throw new Error('Invalid data format');
                     }
+                } else {
+                    throw new Error('Network response was not ok');
                 }
             } catch (e) {
+                console.error(e);
+                isError = true;
+                isLoading = false;
+                renderGrid();
             }
         }
 
