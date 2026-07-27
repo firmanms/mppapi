@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPP Virtual Tour - Data Explorer & Layanan Instansi</title>
+    <meta name="description" content="Aplikasi Web Pengambil dan Penguji Data API Virtual Tour MPP Kabupaten Bandung">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Fonts: Plus Jakarta Sans -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+
+    <!-- FontAwesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace']
+                    },
+                    colors: {
+                        bg: 'var(--color-bg)',
+                        surface: 'var(--color-surface)',
+                        primary: '#10B981',
+                        primaryDark: '#059669',
+                        textMain: 'var(--color-text-main)',
+                        textMuted: 'var(--color-text-muted)',
+                        borderLine: 'var(--color-border)'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --color-bg: #F8FAFC;
+            --color-surface: #FFFFFF;
+            --color-text-main: #0F172A;
+            --color-text-muted: #64748B;
+            --color-border: rgba(0, 0, 0, 0.08);
+
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(0, 0, 0, 0.05);
+            --glass-shadow: 0 4px 20px -1px rgba(0, 0, 0, 0.1);
+
+            --nav-bg: rgba(255, 255, 255, 0.8);
+        }
+
+        .dark {
+            --color-bg: #050505;
+            --color-surface: #0F0F0F;
+            --color-text-main: #F8FAFC;
+            --color-text-muted: #94a3b8;
+            --color-border: rgba(255, 255, 255, 0.08);
+
+            --glass-bg: rgba(15, 15, 15, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+
+            --nav-bg: rgba(5, 5, 5, 0.7);
+        }
+
+        body {
+            background-color: var(--color-bg);
+            color: var(--color-text-main);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+        }
+
+        .bg-pattern {
+            background-image: radial-gradient(var(--color-border) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+    </style>
+</head>
+
+<body class="selection:bg-primary selection:text-white min-h-screen flex flex-col relative overflow-x-hidden font-sans">
+
+    <!-- Background Art -->
+    <div class="fixed inset-0 z-0 pointer-events-none bg-pattern opacity-50"></div>
+    <div
+        class="fixed top-[-20%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-primary/5 blur-[100px] pointer-events-none z-0">
+    </div>
+
+    <!-- ====== MAIN CONTENT ====== -->
+    <main class="flex-1 max-w-7xl mx-auto w-full py-8 px-4 sm:px-6 relative z-10 space-y-8">
+
+        <!-- Banner Header & Metrics -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="glass-card rounded-2xl p-5 flex items-center gap-4">
+                <div
+                    class="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary text-xl">
+                    <i class="fa-solid fa-building"></i>
+                </div>
+                <div>
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-textMuted">Total Instansi</h4>
+                    <p class="text-2xl font-extrabold text-textMain" id="metric-instansi">11</p>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 flex items-center gap-4">
+                <div
+                    class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-500 text-xl">
+                    <i class="fa-solid fa-briefcase"></i>
+                </div>
+                <div>
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-textMuted">Total Layanan</h4>
+                    <p class="text-2xl font-extrabold text-textMain" id="metric-layanan">10</p>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 flex items-center gap-4">
+                <div
+                    class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500 text-xl">
+                    <i class="fa-solid fa-layer-group"></i>
+                </div>
+                <div>
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-textMuted">Lantai MPP</h4>
+                    <p class="text-2xl font-extrabold text-textMain" id="metric-floors">2</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls Bar -->
+        <div class="glass-card rounded-2xl p-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="relative w-full md:w-96">
+                <i
+                    class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-textMuted text-sm"></i>
+                <input type="text" id="search-input" oninput="filterGrid()"
+                    placeholder="Cari nama instansi atau slug..."
+                    class="w-full bg-surface/80 border border-borderLine rounded-xl pl-10 pr-4 py-2.5 text-xs text-textMain outline-none focus:border-primary transition">
+            </div>
+
+            <div class="flex flex-wrap gap-2 w-full md:w-auto" id="floor-buttons">
+                <button onclick="setFloorFilter('Semua')"
+                    class="floor-btn active px-3.5 py-1.5 rounded-full text-xs font-bold bg-primary text-white transition">Semua</button>
+                <button onclick="setFloorFilter('Lantai 1')"
+                    class="floor-btn px-3.5 py-1.5 rounded-full text-xs font-bold bg-surface border border-borderLine text-textMuted hover:text-primary transition">Lantai
+                    1</button>
+                <button onclick="setFloorFilter('Lantai 2')"
+                    class="floor-btn px-3.5 py-1.5 rounded-full text-xs font-bold bg-surface border border-borderLine text-textMuted hover:text-primary transition">Lantai
+                    2</button>
+            </div>
+        </div>
+
+        <!-- Instansi Grid -->
+        <div id="instansi-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Dynamic Grid Populate -->
+        </div>
+
+    </main>
+
+    <!-- ====== FOOTER ====== -->
+    <footer class="border-t border-borderLine bg-bg/80 backdrop-blur-md relative z-10 mt-auto">
+        <div class="max-w-7xl mx-auto px-6 py-6 text-center">
+            <p class="text-textMuted text-xs font-medium">
+                © 2026 Pemerintah Kabupaten Bandung. Seluruh Hak Dilindungi.
+            </p>
+        </div>
+    </footer>
+
+    <!-- ====== CLIENT SCRIPT & DATABASE ====== -->
+    <script>
+        const INSTANSI_DATABASE = [
+            { id: 10, nama: "Bank BJB", slug: "bank-bjb", logo: "https://mpp.bandungkab.com/uploads/ac3cd9ea-a485-4150-a386-c1252606893f.png", lokasiLoket: "Lantai 1, Loket J1", jamPelayanan: "Senin - Jumat: 08.00 - 14.00 WIB", kontak: "14049", kategori: { nama: "BUMD" }, _count: { layanan: 0 } },
+            { id: 1, nama: "Dinas Kependudukan dan Pencatatan Sipil", slug: "disdukcapil", logo: "https://nos.wjv-1.neo.id/skpd/logo/13/1753411939Master%20Logo%20Infografis%20Mediasosial%20(1)%20(1).png", lokasiLoket: "Lantai 1, Loket A1-A5", jamPelayanan: "Senin - Jumat: 08.00 - 15.00 WIB", kontak: "(022) 5891234", kategori: { nama: "Pemerintah" }, _count: { layanan: 3 } },
+            { id: 3, nama: "Badan Pendapatan Daerah", slug: "bapenda", logo: "https://mpp.bandungkab.com/api/files/e0823374-ff7b-4273-93fe-2fb8bff2c83a.png", lokasiLoket: "Lantai 1, Loket C1-C3", jamPelayanan: "Senin - Jumat: 08.00 - 15.00 WIB", kontak: "(022) 5891111", kategori: { nama: "Pemerintah" }, _count: { layanan: 1 } },
+            { id: 4, nama: "BPJS Kesehatan", slug: "bpjs-kesehatan", logo: null, lokasiLoket: "Lantai 2, Loket D1-D2", jamPelayanan: "Senin - Jumat: 08.00 - 14.30 WIB", kontak: "1500400", kategori: { nama: "BUMN" }, _count: { layanan: 1 } },
+            { id: 5, nama: "BPJS Ketenagakerjaan", slug: "bpjs-ketenagakerjaan", logo: null, lokasiLoket: "Lantai 2, Loket E1-E2", jamPelayanan: "Senin - Jumat: 08.00 - 14.30 WIB", kontak: "175", kategori: { nama: "BUMN" }, _count: { layanan: 0 } },
+            { id: 2, nama: "Dinas Penanaman Modal dan Pelayanan Terpadu Satu Pintu", slug: "dpmptsp", logo: null, lokasiLoket: "Lantai 1, Loket B1-B3", jamPelayanan: "Senin - Jumat: 08.00 - 15.00 WIB", kontak: "(022) 5895678", kategori: { nama: "Pemerintah" }, _count: { layanan: 2 } },
+            { id: 9, nama: "Kantor Imigrasi", slug: "imigrasi", logo: null, lokasiLoket: "Lantai 2, Loket I1-I2", jamPelayanan: "Senin - Jumat: 08.00 - 15.00 WIB", kontak: "(022) 5894444", kategori: { nama: "Pemerintah" }, _count: { layanan: 1 } },
+            { id: 7, nama: "Kantor Pertanahan (BPN)", slug: "bpn", logo: null, lokasiLoket: "Lantai 2, Loket G1-G3", jamPelayanan: "Senin - Jumat: 08.00 - 15.00 WIB", kontak: "(022) 5892222", kategori: { nama: "Pemerintah" }, _count: { layanan: 1 } },
+            { id: 8, nama: "Kepolisian Resor Bandung", slug: "polres-bandung", logo: null, lokasiLoket: "Lantai 1, Loket H1", jamPelayanan: "Senin - Jumat: 08.00 - 14.00 WIB", kontak: "(022) 5893333", kategori: { nama: "Pemerintah" }, _count: { layanan: 1 } },
+            { id: 6, nama: "PT PLN (Persero)", slug: "pln", logo: null, lokasiLoket: "Lantai 2, Loket F1", jamPelayanan: "Senin - Jumat: 08.00 - 14.00 WIB", kontak: "123", kategori: { nama: "BUMN" }, _count: { layanan: 0 } },
+            { id: 11, nama: "KADIN", slug: "kadin", logo: "https://mpp.bandungkab.com/api/files/bf4c2e46-a102-4b7d-9c41-fa3630c80a2e.png", lokasiLoket: "Lantai 2", jamPelayanan: "Tentatif", kontak: "-", kategori: { nama: "BUMD" }, _count: { layanan: 0 } }
+        ];
+
+        let activeFloorFilter = 'Semua';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderGrid();
+            tryLiveFetch();
+        });
+
+        function renderGrid() {
+            const grid = document.getElementById('instansi-grid');
+            const searchVal = document.getElementById('search-input').value.toLowerCase();
+            grid.innerHTML = '';
+
+            const filtered = INSTANSI_DATABASE.filter(item => {
+                const matchSearch = item.nama.toLowerCase().includes(searchVal) || (item.slug && item.slug.toLowerCase().includes(searchVal));
+                const matchFloor = activeFloorFilter === 'Semua' || (item.lokasiLoket && item.lokasiLoket.includes(activeFloorFilter));
+                return matchSearch && matchFloor;
+            });
+
+            filtered.forEach(item => {
+                let logoSrc = item.logo;
+                if (logoSrc && !logoSrc.startsWith('http')) {
+                    logoSrc = 'https://mpp.bandungkab.com' + logoSrc;
+                }
+
+                const card = document.createElement('div');
+                card.className = 'glass-card rounded-2xl p-6 flex flex-col justify-between hover:border-primary/40 transition-all duration-300';
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-start gap-4 mb-4">
+                            <div class="w-14 h-14 shrink-0 bg-white rounded-xl border border-borderLine p-2 flex items-center justify-center shadow-sm">
+                                ${logoSrc ? `<img src="${logoSrc}" class="w-full h-full object-contain" onerror="this.outerHTML='<i class=\\'fa-solid fa-building text-2xl text-gray-400\\'></i>'">` : `<i class="fa-solid fa-building text-2xl text-gray-400"></i>`}
+                            </div>
+                            <div>
+                                <span class="px-2.5 py-0.5 bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold rounded-full uppercase">${item.kategori?.nama || 'Instansi'}</span>
+                                <h3 class="font-bold text-base text-textMain leading-snug mt-1">${escapeHtml(item.nama)}</h3>
+                            </div>
+                        </div>
+                        <div class="text-xs text-textMuted space-y-1.5 mb-6">
+                            <div class="flex items-center gap-2"><i class="fa-solid fa-location-dot text-primary w-4 text-center"></i> ${escapeHtml(item.lokasiLoket || 'Lantai 1')}</div>
+                            <div class="flex items-center gap-2"><i class="fa-solid fa-clock text-amber-500 w-4 text-center"></i> ${escapeHtml(item.jamPelayanan || 'Senin - Jumat')}</div>
+                        </div>
+                    </div>
+                    <div class="pt-4 border-t border-borderLine flex items-center justify-between">
+                        <span class="text-xs font-bold text-textMuted"><i class="fa-solid fa-briefcase mr-1 text-primary"></i> ${item._count?.layanan || 0} Layanan</span>
+                        <a href="detail_instansi.html?instansi=${item.slug}" class="px-3.5 py-1.5 bg-primary/10 hover:bg-primary text-primary hover:text-white border border-primary/20 text-xs font-bold rounded-xl transition">
+                            Detail <i class="fa-solid fa-arrow-right ml-1"></i>
+                        </a>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterGrid() {
+            renderGrid();
+        }
+
+        function setFloorFilter(floor) {
+            activeFloorFilter = floor;
+            document.querySelectorAll('.floor-btn').forEach(btn => {
+                if (btn.textContent.trim() === floor) {
+                    btn.className = 'floor-btn active px-3.5 py-1.5 rounded-full text-xs font-bold bg-primary text-white transition';
+                } else {
+                    btn.className = 'floor-btn px-3.5 py-1.5 rounded-full text-xs font-bold bg-surface border border-borderLine text-textMuted hover:text-primary transition';
+                }
+            });
+            renderGrid();
+        }
+
+        async function tryLiveFetch() {
+            try {
+                const liveUrl = 'https://mpp.bandungkab.com/api/vt';
+                const res = await fetch(`https://corsproxy.io/?${encodeURIComponent(liveUrl)}`);
+                if (res.ok) {
+                    const json = await res.json();
+                    if (json.status === 'success' && json.data && json.data.instansi) {
+                        INSTANSI_DATABASE.length = 0;
+                        INSTANSI_DATABASE.push(...json.data.instansi);
+                        renderGrid();
+                    }
+                }
+            } catch (e) {
+            }
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+    </script>
+</body>
+
+</html>
