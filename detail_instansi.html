@@ -151,21 +151,7 @@
             <div id="instansi-detail-container">
             </div>
 
-            <!-- Modal Layanan Detail Container -->
-            <div id="layanan-detail-modal" class="hidden mt-8 pt-8 border-t border-borderLine">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-xl font-bold text-textMain flex items-center gap-2">
-                        <i class="fa-solid fa-file-contract text-primary"></i>
-                        Detail Rincian Layanan
-                    </h3>
-                    <button onclick="closeLayananModal()"
-                        class="text-textMuted hover:text-primary text-sm font-bold flex items-center gap-1">
-                        <i class="fa-solid fa-xmark text-lg"></i> Tutup
-                    </button>
-                </div>
-                <div id="layanan-modal-body" class="space-y-6">
-                </div>
-            </div>
+
 
             <!-- Logo Virtual Tour Di Tengah -->
             <div class="mt-10 flex justify-center items-center">
@@ -204,7 +190,7 @@
                 
                 attemptLiveApiFetch(currentSlug).then(() => {
                     if (layananParam && !isError) {
-                        renderLayananModalHTML(layananParam);
+                        setTimeout(() => toggleLayananAccordion(layananParam), 300);
                     }
                 });
             } else {
@@ -236,19 +222,87 @@
             let layananListHtml = '';
             if (data.layanan && data.layanan.length > 0) {
                 layananListHtml = `
-                    <ul class="space-y-2 text-textMain font-semibold text-sm sm:text-base">
-                        ${data.layanan.map(lay => `
-                            <li class="flex items-center justify-between p-2.5 rounded-xl bg-surface/40 hover:bg-surface/80 border border-borderLine/50 transition">
-                                <span class="flex items-center gap-2">
-                                    <i class="fa-solid fa-chevron-right text-primary text-xs"></i>
-                                    ${escapeHtml(lay.nama)}
-                                </span>
-                                <button onclick="renderLayananModalHTML('${lay.slug}')" class="px-3 py-1 bg-primary/10 hover:bg-primary text-primary hover:text-white border border-primary/20 rounded-lg text-xs font-bold transition">
-                                    Detail <i class="fa-solid fa-arrow-right ml-1"></i>
+                    <div class="space-y-3 mt-4" id="layanan-accordion-container">
+                        ${data.layanan.map((lay) => {
+                            const isGratis = lay.status === 'gratis';
+                            const badgeText = isGratis ? 'GRATIS / TANPA BIAYA' : (lay.biaya || 'BERBAYAR');
+                            
+                            return `
+                            <div class="border border-borderLine/50 rounded-xl overflow-hidden bg-surface/40 transition-all duration-300">
+                                <!-- Accordion Header -->
+                                <button onclick="toggleLayananAccordion('${lay.slug}')" class="w-full flex items-center justify-between p-3.5 hover:bg-surface/80 transition text-left group">
+                                    <span class="flex items-center gap-3 text-textMain font-semibold text-sm sm:text-base">
+                                        <div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary shrink-0 transition-all duration-300 group-hover:bg-primary group-hover:text-white" id="icon-${lay.slug}">
+                                            <i class="fa-solid fa-plus text-xs"></i>
+                                        </div>
+                                        ${escapeHtml(lay.nama)}
+                                    </span>
                                 </button>
-                            </li>
-                        `).join('')}
-                    </ul>
+                                
+                                <!-- Accordion Body (Hidden by Default) -->
+                                <div id="body-${lay.slug}" class="hidden">
+                                    <div class="p-4 sm:p-5 border-t border-borderLine/30 bg-surface/30 space-y-5">
+                                        <div class="flex items-center justify-between">
+                                            <h4 class="text-sm font-bold text-textMain flex items-center gap-2">
+                                                <i class="fa-solid fa-file-contract text-primary"></i>
+                                                Detail Rincian Layanan
+                                            </h4>
+                                            <span class="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 rounded-full text-[10px] font-bold uppercase tracking-widest inline-block">
+                                                ${escapeHtml(badgeText)}
+                                            </span>
+                                        </div>
+
+                                        ${lay.deskripsi ? `
+                                            <div class="w-full overflow-hidden">
+                                                <h5 class="text-xs font-bold uppercase tracking-widest text-textMuted mb-2">Deskripsi</h5>
+                                                <div class="text-sm text-textMain leading-relaxed font-medium bg-surface/80 p-4 rounded-xl border border-borderLine html-content break-words whitespace-pre-wrap w-full overflow-hidden">
+                                                    ${lay.deskripsi}
+                                                </div>
+                                            </div>
+                                        ` : ''}
+
+                                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                            <div>
+                                                <h5 class="text-xs font-bold uppercase tracking-widest text-textMuted mb-2"><i class="fa-solid fa-list-check text-primary mr-1"></i> Persyaratan Berkas</h5>
+                                                <div class="text-xs sm:text-sm text-textMain leading-relaxed font-medium bg-surface/80 p-4 rounded-xl border border-borderLine whitespace-pre-line">
+                                                    ${lay.persyaratan || 'Lihat di website resmi atau tanyakan di loket layanan.'}
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <h5 class="text-xs font-bold uppercase tracking-widest text-textMuted mb-2"><i class="fa-solid fa-diagram-project text-emerald-500 mr-1"></i> Prosedur & Alur</h5>
+                                                <div class="text-xs sm:text-sm text-textMain leading-relaxed font-medium bg-surface/80 p-4 rounded-xl border border-borderLine whitespace-pre-line">
+                                                    ${lay.prosedur || 'Silakan datang langsung ke loket MPP untuk informasi lebih lanjut.'}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                                            <div class="p-4 rounded-xl bg-surface/80 border border-borderLine flex items-center gap-3">
+                                                <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                                                    <i class="fa-solid fa-stopwatch text-lg"></i>
+                                                </div>
+                                                <div>
+                                                    <h6 class="text-[10px] font-bold uppercase tracking-widest text-textMuted">Waktu Penyelesaian</h6>
+                                                    <p class="text-sm font-bold text-textMain">${escapeHtml(lay.waktuPenyelesaian || '-')}</p>
+                                                </div>
+                                            </div>
+                                            <div class="p-4 rounded-xl bg-surface/80 border border-borderLine flex items-center gap-3">
+                                                <div class="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500 shrink-0">
+                                                    <i class="fa-solid fa-wallet text-lg"></i>
+                                                </div>
+                                                <div>
+                                                    <h6 class="text-[10px] font-bold uppercase tracking-widest text-textMuted">Biaya Layanan</h6>
+                                                    <p class="text-sm font-bold text-textMain">${escapeHtml(lay.biaya || 'Gratis')}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                            `;
+                        }).join('')}
+                    </div>
                 `;
             } else {
                 layananListHtml = '<p class="text-sm text-textMuted italic">Belum ada data layanan.</p>';
@@ -320,97 +374,42 @@
         function changeInstansi(slug) {
             if (!slug) return;
             currentSlug = slug;
-            closeLayananModal();
             attemptLiveApiFetch(slug);
 
             const newUrl = window.location.pathname + '?instansi=' + slug;
             window.history.pushState({ path: newUrl }, '', newUrl);
         }
 
-        function renderLayananModalHTML(layananSlug) {
-            const modal = document.getElementById('layanan-detail-modal');
-            const modalBody = document.getElementById('layanan-modal-body');
-
-            const instansiData = HTML_DATABASE[currentSlug];
-            let layData = null;
-
-            if (instansiData && instansiData.layanan) {
-                layData = instansiData.layanan.find(l => l.slug === layananSlug);
+        function toggleLayananAccordion(slug) {
+            const allBodies = document.querySelectorAll('[id^="body-"]');
+            const allIcons = document.querySelectorAll('[id^="icon-"]');
+            
+            const targetBody = document.getElementById('body-' + slug);
+            const targetIcon = document.getElementById('icon-' + slug);
+            
+            const isCurrentlyHidden = targetBody.classList.contains('hidden');
+            
+            // Tutup semua dulu
+            allBodies.forEach(b => {
+                b.classList.add('hidden');
+            });
+            allIcons.forEach(i => {
+                i.innerHTML = '<i class="fa-solid fa-plus text-xs"></i>';
+                i.classList.remove('bg-primary', 'text-white');
+                i.classList.add('bg-primary/10', 'text-primary');
+            });
+            
+            // Jika sebelumnya tertutup, maka buka (toggle)
+            if (isCurrentlyHidden) {
+                targetBody.classList.remove('hidden');
+                targetIcon.innerHTML = '<i class="fa-solid fa-minus text-xs"></i>';
+                targetIcon.classList.remove('bg-primary/10', 'text-primary');
+                targetIcon.classList.add('bg-primary', 'text-white');
+                
+                setTimeout(() => {
+                    targetIcon.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 100);
             }
-
-            modal.classList.remove('hidden');
-            modal.scrollIntoView({ behavior: 'smooth' });
-
-            if (layData) {
-                modalBody.innerHTML = `
-                    <div class="bg-surface/50 border border-borderLine rounded-2xl p-6 space-y-5">
-                        <div class="flex flex-wrap justify-between items-start gap-4 pb-4 border-b border-borderLine">
-                            <div>
-                                <span class="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 rounded-full text-[10px] font-bold uppercase tracking-widest">
-                                    ${layData.status === 'gratis' ? 'GRATIS / TANPA BIAYA' : (layData.biaya || 'BERBAYAR')}
-                                </span>
-                                <h4 class="text-2xl font-bold text-textMain mt-2">${escapeHtml(layData.nama)}</h4>
-                            </div>
-                        </div>
-
-                        ${layData.deskripsi ? `
-                            <div class="w-full overflow-hidden">
-                                <h5 class="text-xs font-bold uppercase tracking-widest text-textMuted mb-2">Deskripsi</h5>
-                                <div class="text-sm text-textMain leading-relaxed font-medium bg-surface/80 p-4 rounded-xl border border-borderLine html-content break-words whitespace-pre-wrap w-full overflow-hidden">
-                                    ${layData.deskripsi}
-                                </div>
-                            </div>
-                        ` : ''}
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <h5 class="text-xs font-bold uppercase tracking-widest text-textMuted mb-2"><i class="fa-solid fa-list-check text-primary mr-1"></i> Persyaratan Berkas</h5>
-                                <div class="text-xs sm:text-sm text-textMain leading-relaxed font-medium bg-surface/80 p-4 rounded-xl border border-borderLine whitespace-pre-line">
-                                    ${layData.persyaratan || 'Lihat di website resmi atau tanyakan di loket layanan.'}
-                                </div>
-                            </div>
-                            <div>
-                                <h5 class="text-xs font-bold uppercase tracking-widest text-textMuted mb-2"><i class="fa-solid fa-diagram-project text-emerald-500 mr-1"></i> Prosedur & Alur</h5>
-                                <div class="text-xs sm:text-sm text-textMain leading-relaxed font-medium bg-surface/80 p-4 rounded-xl border border-borderLine whitespace-pre-line">
-                                    ${layData.prosedur || 'Silakan datang langsung ke loket MPP untuk informasi lebih lanjut.'}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                            <div class="p-4 rounded-xl bg-surface/80 border border-borderLine flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
-                                    <i class="fa-solid fa-stopwatch text-lg"></i>
-                                </div>
-                                <div>
-                                    <h6 class="text-[10px] font-bold uppercase tracking-widest text-textMuted">Waktu Penyelesaian</h6>
-                                    <p class="text-sm font-bold text-textMain">${escapeHtml(layData.waktuPenyelesaian || '-')}</p>
-                                </div>
-                            </div>
-                            <div class="p-4 rounded-xl bg-surface/80 border border-borderLine flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500 shrink-0">
-                                    <i class="fa-solid fa-wallet text-lg"></i>
-                                </div>
-                                <div>
-                                    <h6 class="text-[10px] font-bold uppercase tracking-widest text-textMuted">Biaya Layanan</h6>
-                                    <p class="text-sm font-bold text-textMain">${escapeHtml(layData.biaya || 'Gratis')}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            } else {
-                modalBody.innerHTML = `
-                    <div class="p-6 bg-surface/50 border border-borderLine rounded-2xl text-center text-textMuted">
-                        <p class="font-bold text-textMain mb-1">Layanan: ${escapeHtml(layananSlug)}</p>
-                        <p class="text-xs">Informasi layanan tidak ditemukan dalam database saat ini.</p>
-                    </div>
-                `;
-            }
-        }
-
-        function closeLayananModal() {
-            document.getElementById('layanan-detail-modal').classList.add('hidden');
         }
 
         async function attemptLiveApiFetch(slug) {
